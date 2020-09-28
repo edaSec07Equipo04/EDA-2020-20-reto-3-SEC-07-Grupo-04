@@ -37,8 +37,8 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
+accidentsFile = "us_accidents_small.csv"
 
-crimefile = 'crime-utf8.csv'
 
 # ___________________________________________________
 #  Menu principal
@@ -51,8 +51,12 @@ def printMenu():
     print("Bienvenido")
     print("1- Inicializar Analizador")
     print("2- Cargar información de accidentes")
-    print("3- Requerimento 1")
-    print("4- Requerimento 2")
+    print("3- Conocer los accidentes en una fecha")
+    print("4- Conocer los accidentes anteriores a una fecha")
+    print("5- Conocer los accidentes en un rango de fechas")
+    print("6- Conocer el estado con más accidentes")
+    print("7- Conocer los accidentes por rango de horas")
+    print("8- Conocer la zona geográfica más accidentada")
     print("0- Salir")
     print("*******************************************")
 
@@ -70,14 +74,40 @@ while True:
         cont = controller.init()
 
     elif int(inputs[0]) == 2:
-        print("\nCargando información de crimenes ....")
+        print("\nCargando información de accidentes aéreos ....")
+        controller.loadData(cont, accidentsFile)
+        print('Accidentes cargados: ' + str(controller.accidentsSize(cont)))
+        print('Altura del arbol: ' + str(controller.indexHeight(cont)))
+        print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
+        print('Menor Llave: ' + str(controller.minKey(cont)))
+        print('Mayor Llave: ' + str(controller.maxKey(cont)))
 
     elif int(inputs[0]) == 3:
-        print("\nBuscando crimenes en un rango de fechas: ")
-
+        print("\nBuscando accidentes en una fecha específica: ")
+        #date = input("Ingrese la fecha a buscar (YYYY-MM-DD): ") 
 
     elif int(inputs[0]) == 4:
-        print("\nRequerimiento No 1 del reto 3: ")
+        print("\nBuscando accidentes anteriores a una fecha: ")
+        #date = input("Ingrese la fecha a buscar (YYYY-MM-DD): ")
+
+    elif int(inputs[0]) == 5:
+        print("\nBuscando accidentes en un rango de fechas: ")
+        #dateInit = input("Ingrese la fecha inicial (YYYY-MM-DD): ")
+        #finalDate = input("Ingrese la fecha final (YYY-MM-DD): ")
+
+    elif int(inputs[0]) == 6:
+        print("\nBuscando el estado con más accidentes: ")
+        #date = input("Ingrese la fecha a buscar (YYYY-MM-DD): ")
+
+    elif int(inputs[0]) == 7:
+        print("\nBuscando accidentes por rango de horas: ")
+        #timeInit = input("Ingrese la hora inicial (00:00-23:59): ") 
+        #Finaltime = input("Ingrese la hora final (00:00-23:59): ")     
+          
+    elif int(inputs[0]) == 8:
+        print("\nBuscando la zona geográfica más accidentada: ")
+        #latitude = input("Ingrese la latitud: ")
+        #length = input("Ingrese la longitud: ")
 
     else:
         sys.exit(0)
