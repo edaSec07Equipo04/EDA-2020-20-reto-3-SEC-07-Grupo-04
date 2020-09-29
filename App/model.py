@@ -78,7 +78,7 @@ def updateDateIndex(map, accident):
     accidentdate = datetime.datetime.strptime(occurreddate, '%Y-%m-%d %H:%M:%S')
     entry = om.get(map, accidentdate.date())
     if entry is None:
-        datentry = newDataEntry(accident)
+        datentry = newDataEntry2(accident)
         om.put(map, accidentdate.date(), datentry)
     else:
         datentry = me.getValue(entry)
@@ -86,7 +86,24 @@ def updateDateIndex(map, accident):
 
     return map
 
-def addDateIndex(dateentry, accident):
+def addDateIndex(dateentry,accident):
+    lst = dateentry['lstaccidents']
+    lt.addLast(lst,accident)
+    severityIndex=dateentry['severityIndex']
+    severityEntry = m.get(severityIndex, accident['Severity'])
+    if (severityEntry is None):
+        entry = newSeverityEntry(accident['Severity'],accident)       
+        lt.addLast(entry['lstseverity'],accident)        
+        m.put(severityIndex,accident['Severity'],entry)
+        
+    else:
+        entry=me.getValue(severityEntry)
+        lt.addLast(entry['lstseverity'],accident)
+
+    return dateentry
+
+# INICIO PRUEBA DE IMPLEMENTACIÓN PARA OTROS REQUERIMIENTOS
+""" def addDateIndex2(dateentry, dateentry2,accident):
     lst = dateentry['lstaccidents']
     lt.addLast(lst,accident)
     stateIndex=dateentry['stateIndex']
@@ -100,7 +117,9 @@ def addDateIndex(dateentry, accident):
         entry=me.getValue(stateEntry)
         lt.addLast(entry['lststates'],accident)
 
-    severityIndex=dateentry['severityIndex']
+    lst2=dateentry2['lstaccidents']
+    lt.addLast(lst,accident)
+    severityIndex=dateentry2['severityIndex']
     severityEntry=m.get(severityIndex,accident['Severity'])
     
     if (severityEntry is None):
@@ -111,7 +130,7 @@ def addDateIndex(dateentry, accident):
     else:
         entry2=me.getValue(severityEntry)
         lt.addLast(entry2['lstseverity'],accident)
-    return dateentry 
+    return dateentry   
 
 
 def newDataEntry(accident):
@@ -128,8 +147,8 @@ def newStateEntry(stategrp, state):
     statentry = {'state':None, 'lststates':None}
     statentry['state']=stategrp
     statentry['lststates']=lt.newList('SINGLE_LINKED',compareStates)
-    return statentry
-
+    return statentry """
+# FINAL PRUEBA DE IMPLEMENTACIÓN
 
 def newDataEntry2(accident):
 
@@ -150,6 +169,32 @@ def newSeverityEntry(severitygrp, severity):
 # ==============================
 # Funciones de consulta
 # ==============================
+def getAccidentsByDate(analyzer,date):
+
+    accidentDate=om.get(analyzer['dateIndex'],date)
+    if accidentDate:
+        if accidentDate['key'] is not None:
+            lst = lt.newList('ARRAY_LIST')
+            severityMap = me.getValue(accidentDate)['severityIndex']
+            severityNum1 = m.get(severityMap,'1')
+            severityNum2=m.get(severityMap,'2')
+            severityNum3=m.get(severityMap,'3')
+            if (severityNum1 is not None):
+                lt.addLast(lst,(m.size(me.getValue(severityNum1)['lstseverity'])))
+            else:
+                lt.addLast(lst,0)
+            if (severityNum2 is not None):
+                lt.addLast(lst,(m.size(me.getValue(severityNum2)['lstseverity'])))
+            else:
+                lt.addLast(lst,0)
+            if (severityNum3 is not None):
+                lt.addLast(lst,(m.size(me.getValue(severityNum3)['lstseverity'])))
+            else:
+                lt.addLast(lst,0)
+            return (lt.getElement(lst,1),lt.getElement(lst,2),lt.getElement(lst,3))
+    else:
+        return 0
+
 def accidentsSize(analyzer):
     """
     Número de accidentes en el catago
@@ -216,9 +261,10 @@ def compareStates(state1,state2):
         return -1
 
 def compareSeverity(severity1,severity2):
-    if(severity1==severity2):
+    severity=me.getKey(severity2)
+    if(severity1==severity):
         return 0
-    elif (severity1>severity2):
+    elif (severity1>severity):
         return 1
     else:
         return -1

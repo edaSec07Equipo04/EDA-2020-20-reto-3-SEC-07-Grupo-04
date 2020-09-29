@@ -84,7 +84,14 @@ while True:
 
     elif int(inputs[0]) == 3:
         print("\nBuscando accidentes en una fecha específica: ")
-        #date = input("Ingrese la fecha a buscar (YYYY-MM-DD): ") 
+        date = input("Ingrese la fecha a buscar (YYYY-MM-DD): ") 
+        numAccidents = controller.getAccidentsByDate(cont,date)
+        if numAccidents == 0:
+            print("La fecha ingresada no tiene accidentes relacionados.")
+        else:
+            print('\nNúmero total de accidentes con severidad 1 en esa fecha: ' + str(numAccidents[0]))
+            print('\nNúmero total de accidentes con severidad 2 en esa fecha: ' +str(numAccidents[1]))
+            print('\nNúmero total de accidentes con severidad 3 en esa fecha: ' +str(numAccidents[2]))
 
     elif int(inputs[0]) == 4:
         print("\nBuscando accidentes anteriores a una fecha: ")
