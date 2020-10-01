@@ -179,6 +179,7 @@ def getAccidentsByDate(analyzer,date):
             severityNum1 = m.get(severityMap,'1')
             severityNum2=m.get(severityMap,'2')
             severityNum3=m.get(severityMap,'3')
+            severityNum4=m.get(severityMap,'4')
             if (severityNum1 is not None):
                 lt.addLast(lst,(m.size(me.getValue(severityNum1)['lstseverity'])))
             else:
@@ -191,7 +192,11 @@ def getAccidentsByDate(analyzer,date):
                 lt.addLast(lst,(m.size(me.getValue(severityNum3)['lstseverity'])))
             else:
                 lt.addLast(lst,0)
-            return (lt.getElement(lst,1),lt.getElement(lst,2),lt.getElement(lst,3))
+            if (severityNum4 is not None):
+                lt.addLast(lst,(m.size(me.getValue(severityNum4)['lstseverity'])))
+            else:
+                lt.addLast(lst,0)
+            return (lt.getElement(lst,1),lt.getElement(lst,2),lt.getElement(lst,3),lt.getElement(lst,4))
     else:
         return 0
 
