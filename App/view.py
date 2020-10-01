@@ -37,8 +37,9 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
+#accidentsFile = "US_Accidents_Dec19.csv"
 accidentsFile = "us_accidents_small.csv"
-
+#accidentsFile = "us_accidents_dis_2016 copy.csv"
 
 # ___________________________________________________
 #  Menu principal
