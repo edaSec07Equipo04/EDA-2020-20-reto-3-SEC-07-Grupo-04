@@ -37,7 +37,7 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-accidentsFile = "us_accidents_small.csv"
+accidentsFile = "us_accidents_dis_2016.csv"
 
 
 # ___________________________________________________
@@ -92,6 +92,7 @@ while True:
             print('\nNúmero total de accidentes con severidad 1 en esa fecha: ' + str(numAccidents[0]))
             print('\nNúmero total de accidentes con severidad 2 en esa fecha: ' +str(numAccidents[1]))
             print('\nNúmero total de accidentes con severidad 3 en esa fecha: ' +str(numAccidents[2]))
+            print('\nNúmero total de accidentes con severidad 4 en esa fecha: ' +str(numAccidents[3]))
 
     elif int(inputs[0]) == 4:
         print("\nBuscando accidentes anteriores a una fecha: ")
