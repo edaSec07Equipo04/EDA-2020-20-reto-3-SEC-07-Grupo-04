@@ -51,7 +51,7 @@ def newAnalyzer():
                 }
 
     analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
-    analyzer['dateIndex'] = om.newMap(omaptype='BST',
+    analyzer['dateIndex'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
     return analyzer
 
@@ -102,53 +102,7 @@ def addDateIndex(dateentry,accident):
 
     return dateentry
 
-# INICIO PRUEBA DE IMPLEMENTACIÓN PARA OTROS REQUERIMIENTOS
-""" def addDateIndex2(dateentry, dateentry2,accident):
-    lst = dateentry['lstaccidents']
-    lt.addLast(lst,accident)
-    stateIndex=dateentry['stateIndex']
-    stateEntry = m.get(stateIndex, accident['State'])
-    if (stateEntry is None):
-        entry = newStateEntry(accident['State'],accident)       
-        lt.addLast(entry['lststates'],accident)        
-        m.put(stateIndex,accident['State'],entry)
-        
-    else:
-        entry=me.getValue(stateEntry)
-        lt.addLast(entry['lststates'],accident)
 
-    lst2=dateentry2['lstaccidents']
-    lt.addLast(lst,accident)
-    severityIndex=dateentry2['severityIndex']
-    severityEntry=m.get(severityIndex,accident['Severity'])
-    
-    if (severityEntry is None):
-        entry2 = newSeverityEntry(accident['Severity'],accident)
-        lt.addLast(entry2['lstseverity'],accident)
-        m.put(severityIndex,accident['Severity'],entry2)
-
-    else:
-        entry2=me.getValue(severityEntry)
-        lt.addLast(entry2['lstseverity'],accident)
-    return dateentry   
-
-
-def newDataEntry(accident):
-
-    entry={'stateIndex':None,'lstaccidents':None}
-    entry['stateIndex']=m.newMap(numelements=53,
-                                 maptype='PROBING',
-                                 comparefunction=compareStates)
-    entry['lstaccidents']=lt.newList('SINGLE_LINKED',compareDates)
-    return entry
-
-def newStateEntry(stategrp, state):
-
-    statentry = {'state':None, 'lststates':None}
-    statentry['state']=stategrp
-    statentry['lststates']=lt.newList('SINGLE_LINKED',compareStates)
-    return statentry """
-# FINAL PRUEBA DE IMPLEMENTACIÓN
 
 def newDataEntry2(accident):
 
