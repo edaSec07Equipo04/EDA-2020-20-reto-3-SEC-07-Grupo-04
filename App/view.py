@@ -37,10 +37,12 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-accidentsFile = "US_Accidents_Dec19.csv"
+#accidentsFile = "US_Accidents_Dec19.csv"
 #accidentsFile = "us_accidents_small.csv"
-#accidentsFile = "us_accidents_dis_2016.csv"
-
+accidentsFile = "us_accidents_dis_2016.csv"
+#accidentsFile = "us_accidents_dis_2017.csv"
+#accidentsFile = "us_accidents_dis_2018.csv"
+#accidentsFile = "us_accidents_dis_2019.csv"
 
 # ___________________________________________________
 #  Menu principal
@@ -107,7 +109,11 @@ while True:
 
     elif int(inputs[0]) == 6:
         print("\nBuscando el estado con más accidentes: ")
-        #date = input("Ingrese la fecha a buscar (YYYY-MM-DD): ")
+        dateInit = input("Ingrese la fecha inicial (YYYY-MM-DD): ")
+        finalDate = input("Ingrese la fecha final (YYY-MM-DD): ")
+        result = controller.getStateWithMoreAccidents(cont,dateInit,finalDate)
+        print("La fecha con más accidentes reportados en el rango de fechas es: "+result[0])
+        print("El estado con más accidentes reportados en el rango de fechas es: " + result[1])
 
     elif int(inputs[0]) == 7:
         print("\nBuscando accidentes por rango de horas: ")

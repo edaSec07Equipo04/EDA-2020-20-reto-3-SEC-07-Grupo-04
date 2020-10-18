@@ -45,7 +45,6 @@ def init():
     analyzer = model.newAnalyzer()
     return analyzer
 
-
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
@@ -69,6 +68,11 @@ def loadData(analyzer, accidentsfile):
 def getAccidentsByDate(analyzer,date):
     date = datetime.datetime.strptime(date, '%Y-%m-%d')
     return model.getAccidentsByDate(analyzer,date.date())
+
+def getStateWithMoreAccidents(analyzer,initialDate,finalDate):
+    initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
+    finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
+    return model.getStateWithMoreAccidents(analyzer,initialDate.date(),finalDate.date())
 
 
 def accidentsSize(analyzer):

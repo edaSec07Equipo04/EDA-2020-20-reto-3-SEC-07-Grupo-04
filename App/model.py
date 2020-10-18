@@ -67,7 +67,7 @@ def addAccident(analyzer, accident):
 
 def updateDateIndex(map, accident):
     """
-    Se toma la fecha del accidentn y se busca si ya existe en el arbol
+    Se toma la fecha del accidente y se busca si ya existe en el arbol
     dicha fecha.  Si es asi, se adiciona a su lista de accidentnes
     y se actualiza el indice de tipos de accidentnes.
 
@@ -88,17 +88,21 @@ def updateDateIndex(map, accident):
 
 def addDateIndex(dateentry,accident):
     lst = dateentry['lstaccidents']
+    lst2 = dateentry['states']
     lt.addLast(lst,accident)
+    lt.addLast(lst2,accident['State'])
     severityIndex=dateentry['severityIndex']
     severityEntry = m.get(severityIndex, accident['Severity'])
     if (severityEntry is None):
         entry = newSeverityEntry(accident['Severity'],accident)       
-        lt.addLast(entry['lstseverity'],accident)        
+        lt.addLast(entry['lstseverity'],accident)   
+        lt.addLast(entry['state'],accident['State'])     
         m.put(severityIndex,accident['Severity'],entry)
         
     else:
         entry=me.getValue(severityEntry)
         lt.addLast(entry['lstseverity'],accident)
+        lt.addLast(entry['state'],accident['State'])
 
     return dateentry
 
@@ -106,25 +110,30 @@ def addDateIndex(dateentry,accident):
 
 def newDataEntry2(accident):
 
-    entry={'severityIndex':None,'lstaccidents':None}
+    entry={'severityIndex':None,'lstaccidents':None, 'states':None}
     entry['severityIndex']=m.newMap(numelements=5,
                                  maptype='PROBING',
                                  comparefunction=compareSeverity)
     entry['lstaccidents']=lt.newList('SINGLE_LINKED',compareDates)
+    entry['states'] = lt.newList('ARRAY_LIST',compareStates)
+
     return entry
 
 def newSeverityEntry(severitygrp, severity):
 
-    severityentry = {'severity':None, 'lstseverity':None}
+    severityentry = {'severity':None, 'lstseverity':None, 'state':None }
     severityentry['severity']=severitygrp
     severityentry['lstseverity']=lt.newList('SINGLE_LINKED',compareSeverity)
+    severityentry['state']=lt.newList('ARRAY_LIST',compareStates)
     return severityentry
 
 # ==============================
 # Funciones de consulta
 # ==============================
 def getAccidentsByDate(analyzer,date):
-
+    '''
+    Reporta la cantidad de accidentes por severidad para la fecha ingresada
+    '''
     accidentDate=om.get(analyzer['dateIndex'],date)
     if accidentDate:
         if accidentDate['key'] is not None:
@@ -153,6 +162,90 @@ def getAccidentsByDate(analyzer,date):
             return (lt.getElement(lst,1),lt.getElement(lst,2),lt.getElement(lst,3),lt.getElement(lst,4))
     else:
         return 0
+
+############## REQUERIMIENTO 4 - Germán Rojas ##############################
+
+def getStateWithMoreAccidents(analyzer,initialDate, finalDate):
+    '''
+    - Reporta en estado con más accidentes en el rango ingresado.
+    - Reporta la fecha con más accidentes en el rango ingresado.
+    '''
+    maxAccidents = 0
+    resultDate = ''
+    lst = om.values(analyzer['dateIndex'],initialDate,finalDate) #Listado de fechas dentro del rango
+    totalData = {} #Aquí se guardan los estados con su número de accidentes
+    winnerState=''
+    stateQuantity = 0
+    for i in range(1,lt.size(lst)+1): #Se recorre cada año para obtener la información necesaria 
+        date = lt.getElement(lst,i)
+        severities = getAccidentsByDate(analyzer,date)
+        total = severities[0]+severities[1]+severities[2]+severities[3]
+        if total > maxAccidents:
+            maxAccidents = total
+            resultDate = str(date)
+        data={}
+        accidentDate=om.get(analyzer['dateIndex'],date) #Se obtiene el número de accidentes en cada año para cada estado
+        if accidentDate:
+            if accidentDate['key'] is not None:
+                severityMap = me.getValue(accidentDate)['severityIndex']
+                severityNum1 = m.get(severityMap,'1')
+                severityNum2=m.get(severityMap,'2')
+                severityNum3=m.get(severityMap,'3')
+                severityNum4=m.get(severityMap,'4')
+                if (severityNum1 is not None):
+                    a =(me.getValue(severityNum1)['state'])
+                    for j in range(1,lt.size(a)):
+                        info = lt.getElement(a,j)
+                        if info in data.keys():
+                            data[info]+=1
+                        else:
+                            data[info]=1
+                else:
+                    pass
+                if (severityNum2 is not None):
+                    b=(me.getValue(severityNum2)['state'])
+                    for j in range(1,lt.size(b)):
+                        info = lt.getElement(b,j)
+                        if info in data.keys():
+                            data[info]+=1
+                        else:
+                            data[info]=1
+                else:
+                    pass
+                if (severityNum3 is not None):
+                    c=(me.getValue(severityNum3)['state'])
+                    for j in range(1,lt.size(c)):
+                        info = lt.getElement(c,j)
+                        if info in data.keys():
+                            data[info]+=1
+                        else:
+                            data[info]=1
+                else:
+                    pass
+                if (severityNum4 is not None):
+                    d=(me.getValue(severityNum4)['state'])
+                    for j in range(1,lt.size(d)):
+                        info = lt.getElement(d,j)
+                        if info in data.keys():
+                            data[info] +=1
+                        else:
+                            data[info]=1
+                else:
+                    pass
+
+        for key,value in data.items(): #Se suman los valores de cada año para cada estado
+            if key in totalData.keys():
+                totalData[key]+=value
+            else:
+                totalData[key]=value
+    
+    for key,value in totalData.items(): #Se realizan comparaciones para obtener el estado con más accidentes
+        if value > stateQuantity:
+            stateQuantity = value
+            winnerState=key
+    return resultDate,winnerState
+#################################################################
+
 
 def accidentsSize(analyzer):
     """
