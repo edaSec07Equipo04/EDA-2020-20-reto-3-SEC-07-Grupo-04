@@ -246,7 +246,7 @@ def getAccidentsBefore(analyzer, date):
             fecha_max = fecha
 
 
-    return(totalT,maximo,fecha_max)
+    return(totalT,fecha_max)
 
 
 
