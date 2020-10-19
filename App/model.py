@@ -248,6 +248,38 @@ def getAccidentsBefore(analyzer, date):
 
     return(totalT,fecha_max)
 
+############## REQUERIMIENTO 3 - SEBASTIAN PEÑA ##############################
+
+def getAccidentsByRange (analyzer,initialDate, finalDate):
+    lst= om.values(analyzer['dateIndex'],initialDate, finalDate)
+    total_sum=0
+    sev_1=0
+    sev_2=0
+    sev_3=0
+    sev_4=0
+
+    
+    for i in range(1,lt.size(lst)+1):
+        data= lt.getElement(lst, i)
+        severity=getAccidentsByDate(analyzer,data)
+        tot=severity[0]+severity[1]+severity[2]+severity[3]
+        total_sum+=tot
+        sev_1+=severity[0]
+        sev_2+=severity[1]
+        sev_3+=severity[2]
+        sev_4+=severity[3]
+    mayor_sev=max(sev_1,sev_2,sev_3,sev_4)
+    if sev_1==mayor_sev:
+        result='severidad 1'
+    elif sev_2==mayor_sev:
+        result='severidad 2'
+    elif sev_3==mayor_sev:
+        result='severidad 3'
+    elif sev_4==mayor_sev:
+        result='severidad 4'
+    return result,total_sum
+    
+
 
 
 ############## REQUERIMIENTO 4 - Germán Rojas ##############################

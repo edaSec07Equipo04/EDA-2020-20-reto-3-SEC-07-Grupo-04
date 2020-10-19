@@ -38,8 +38,8 @@ operación seleccionada.
 # ___________________________________________________
 
 #accidentsFile = "US_Accidents_Dec19.csv"
-accidentsFile = "us_accidents_small.csv"
-#accidentsFile = "us_accidents_dis_2016.csv"
+#accidentsFile = "us_accidents_small.csv"
+accidentsFile = "us_accidents_dis_2016 copy.csv"
 #accidentsFile = "us_accidents_dis_2017.csv"
 #accidentsFile = "us_accidents_dis_2018.csv"
 #accidentsFile = "us_accidents_dis_2019.csv"
@@ -173,7 +173,9 @@ while True:
         print("\nBuscando accidentes en un rango de fechas: ")
         dateInit = input("Ingrese la fecha inicial (YYYY-MM-DD): ")
         finalDate = input("Ingrese la fecha final (YYY-MM-DD): ")
-        controller.getTotalAccidentsReq3(cont,dateInit,finalDate)
+        result=controller.getTotalAccidentsReq3(cont,dateInit,finalDate)
+        print('El total de accidentes en ese rango de fechas es: '+ str(result[1]))
+        print('La categoria con mas accidentes en el rango de fechas es: '+ result[0])
 
     elif int(inputs[0]) == 6:
         print("\nBuscando el estado con más accidentes: ")

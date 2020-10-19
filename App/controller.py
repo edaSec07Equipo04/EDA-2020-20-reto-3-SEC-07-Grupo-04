@@ -76,6 +76,12 @@ def getAccidentsBeforeTo(analyzer,date):
     
     return model.getAccidentsBefore(analyzer,date.date())
 
+## Requerimiento 3
+def getTotalAccidentsReq3(analyzer, initialDate, finalDate):
+    initialDate = datetime.datetime.strptime(initialDate, '%Y-%m-%d')
+    finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
+    return model.getAccidentsByRange(analyzer,initialDate.date(),finalDate.date())
+
 
 
 ## Requerimiento 4
