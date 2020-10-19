@@ -79,8 +79,8 @@ def getAccidentsByTimeRange(analyzer,initialTime,finalTime):
     finalTime = datetime.datetime.strptime(finalTime,'%H:%M')
     return model.getAccidentsByTimeRange(analyzer,initialTime.time(),finalTime.time())
 
-def getZoneWithMoreAccidents(analyzer, refLat, refLong):
-    return model.getZoneWithMoreAccidents(analyzer,refLat,refLong)
+def getZoneWithMoreAccidents(analyzer, refLat, refLong,givenRad,preference):
+    return model.getZoneWithMoreAccidents(analyzer,refLat,refLong,givenRad,preference)
 
 ############# dateIndex #################
 def accidentsSize(analyzer):

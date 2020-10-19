@@ -89,6 +89,14 @@ def printAccidentsByTimeRange(cont,timeInit,Finaltime):
     for key,value in severities.items():
         print("El número de accidentes para la severidad "+key+" es: "+ str(value)+". Esto equivale a un porcentaje de "+str(percentages[key])+"%"+ "sobre el nivel total de accidentes.")
 
+def printZoneWithMoreAccidents(analyzer,latitude,length,rad,preference):
+    weekDays,total = controller.getZoneWithMoreAccidents(analyzer,latitude,length,rad,preference.lower())
+    print("El total de accidentes en el radio de búsqueda es de: "+str(total))
+    print("Los accidentes según el día de la semana son los siguientes: ")
+    print("__________________________________")
+    for key,value in weekDays.items():
+        print(key+": \t"+str(value))
+    print("__________________________________")
 
 # ___________________________________________________
 #  Menu principal
@@ -176,9 +184,11 @@ while True:
           
     elif int(inputs[0]) == 8:
         print("\nBuscando la zona geográfica más accidentada: ")
-        #latitude = input("Ingrese la latitud: ")
-        #length = input("Ingrese la longitud: ")
-        controller.getZoneWithMoreAccidents(cont, 0, 0):
+        preference = input("Digite 'Mi' si desea realizar la búsqueda en Millas. 'Km' si desea realizarla en Kilómetros: ")
+        latitude = input("Ingrese la latitud: ")
+        length = input("Ingrese la longitud: ")
+        rad = input("Ingrese el radio a buscar: ")
+        printZoneWithMoreAccidents(cont,float(latitude),float(length),float(rad),preference)
 
     else:
         sys.exit(0)

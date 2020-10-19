@@ -52,7 +52,7 @@ def newAnalyzer():
                 'timeIndex': None
                 }
 
-    analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
+    analyzer['accidents'] = lt.newList('ARRAY_LIST', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
     analyzer['timeIndex'] = om.newMap(omaptype='RBT',
@@ -361,7 +361,51 @@ def getAccidentsByTimeRange(analyzer,initialTime,finalTime):
     return severities,percentages
 #################################################################################
 
+############# REQUERIMIENTO 6 ##########################
+def getZoneWithMoreAccidents(analyzer, refLat, refLong,givenRad,preference):
+    accidents = analyzer['accidents']
+    lon1 = radians(refLong)
+    lat1 = radians(refLat)
+    lstAccepted = lt.newList('ARRAY_LIST',compareIds)
+    weekDays = {'Monday': 0,
+                'Tuesday': 0,
+                'Wednesday':0,
+                'Thursday':0,
+                'Friday':0,
+                'Saturday':0,
+                'Sunday':0}
+    for i in range(1,lt.size(accidents)+1):
+        accidentInfo = lt.getElement(accidents,i)
+        accidentLat = float(accidentInfo['Start_Lat'])
+        accidentLng = float(accidentInfo['Start_Lng'])
+        lon2 = accidentLng
+        lat2 = accidentLat
 
+        dlon = lon2-lon1
+        dlat = lat2-lat1
+        a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+
+        c = 2*asin(sqrt(a))
+        if preference == 'km':
+            r = 6371 #Radio de la tierra en kilómetros
+        elif preference == 'mi':
+            r = 3956 #Radio de la tierra en millas
+
+        result = c * r
+        if result <= givenRad:
+            lt.addLast(lstAccepted,accidentInfo)
+    total = lt.size(lstAccepted)
+    for i in range(1,lt.size(lstAccepted)+1):
+        accident = lt.getElement(lstAccepted,i)
+        accidentDate = accident['Start_Time']
+        accidentDate=datetime.datetime.strptime(accidentDate, "%Y-%m-%d %H:%M:%S")
+        ocurredDate=datetime.datetime.strftime(accidentDate,"%A %b %d %H:%M:%S %Y")
+        ocurredDate = str(ocurredDate)
+        lstOcurred = ocurredDate.split(" ")
+        if lstOcurred[0] in weekDays.keys():
+            weekDays[lstOcurred[0]]+=1
+    return weekDays,total
+#############################################
 
 def accidentsSize(analyzer):
     """
