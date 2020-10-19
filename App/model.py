@@ -236,16 +236,16 @@ def getAccidentsBefore(analyzer, date):
 
     for i in range(1,lt.size(dates)+1):
         fecha = lt.getElement(dates,i)
+        if fecha != date:
+            severity = getAccidentsByDate(analyzer,fecha)
+            total    = severity[0] + severity[1] + severity[2] + severity[3]
+            totalT   += total
+            
+            if total > maximo:
+                maximo = total
+                fecha_max = fecha
 
-        severity = getAccidentsByDate(analyzer,fecha)
-        total    = severity[0] + severity[1] + severity[2] + severity[3]
-        totalT   += total
-        
-        if total > maximo:
-            maximo = total
-            fecha_max = fecha
-
-
+    totalT -= 1
     return(totalT,fecha_max)
 
 ############## REQUERIMIENTO 3 - SEBASTIAN PEÑA ##############################
