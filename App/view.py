@@ -45,6 +45,60 @@ accidentsFile = "us_accidents_small.csv"
 #accidentsFile = "us_accidents_dis_2019.csv"
 
 # ___________________________________________________
+# Funciones para imprimir información
+# ___________________________________________________
+
+def printAccidentsByTimeRange(cont,timeInit,Finaltime):
+    lstTimeInit = timeInit.split(":")
+    lstTimeFinal = Finaltime.split(":")
+    hourInit = int(lstTimeInit[0])
+    minuteInit = int(lstTimeInit[1])
+    hourFinal = int(lstTimeFinal[0])
+    minuteFinal = int(lstTimeFinal[1])
+
+    if hourInit == 23 and minuteInit >= 30:
+        lstTimeInit[0] = "00"
+        lstTimeInit[1] = "00"
+    elif minuteInit >= 30:
+        minuteInit = "00"
+        hourInit += 1
+        hourInit = str(hourInit)
+        lstTimeInit[0] = hourInit
+        lstTimeInit[1] = minuteInit
+    else:
+        minuteInit = "00"
+        lstTimeInit[1] = minuteInit
+
+    if hourFinal == 23 and minuteFinal >= 30:
+        lstTimeFinal[0] = "00"
+        lstTimeFinal[1] = "00"
+    elif minuteFinal >= 30:
+        minuteFinal = "00"
+        hourFinal += 1
+        hourFinal = str(hourFinal)
+        lstTimeFinal[0] = hourFinal
+        lstTimeFinal[1] = minuteFinal
+    else:
+        minuteFinal = "00"
+        lstTimeFinal[1] = minuteFinal
+    
+    timeInit = ":".join(lstTimeInit)
+    Finaltime=":".join(lstTimeFinal)
+
+    severities, percentages=controller.getAccidentsByTimeRange(cont,timeInit,Finaltime)
+    for key,value in severities.items():
+        print("El número de accidentes para la severidad "+key+" es: "+ str(value)+". Esto equivale a un porcentaje de "+str(percentages[key])+"%"+ "sobre el nivel total de accidentes.")
+
+def printZoneWithMoreAccidents(analyzer,latitude,length,rad,preference):
+    weekDays,total = controller.getZoneWithMoreAccidents(analyzer,latitude,length,rad,preference.lower())
+    print("El total de accidentes en el radio de búsqueda es de: "+str(total))
+    print("Los accidentes según el día de la semana son los siguientes: ")
+    print("__________________________________")
+    for key,value in weekDays.items():
+        print(key+": \t"+str(value))
+    print("__________________________________")
+
+# ___________________________________________________
 #  Menu principal
 # ___________________________________________________
 
@@ -80,11 +134,18 @@ while True:
     elif int(inputs[0]) == 2:
         print("\nCargando información de accidentes aéreos ....")
         controller.loadData(cont, accidentsFile)
+        print('ÁRBOL DE FECHAS')
         print('Accidentes cargados: ' + str(controller.accidentsSize(cont)))
         print('Altura del arbol: ' + str(controller.indexHeight(cont)))
         print('Elementos en el arbol: ' + str(controller.indexSize(cont)))
         print('Menor Llave: ' + str(controller.minKey(cont)))
         print('Mayor Llave: ' + str(controller.maxKey(cont)))
+        print('\n')
+        print('ÁRBOL DE HORAS')
+        print('Altura del arbol: ' + str(controller.timeIndexHeight(cont)))
+        print('Elementos en el arbol: ' + str(controller.timeIndexSize(cont)))
+        print('Menor Llave: ' + str(controller.minKeyTime(cont)))
+        print('Mayor Llave: ' + str(controller.maxKeyTime(cont)))
 
     elif int(inputs[0]) == 3:
         print("\nBuscando accidentes en una fecha específica: ")
@@ -119,13 +180,17 @@ while True:
 
     elif int(inputs[0]) == 7:
         print("\nBuscando accidentes por rango de horas: ")
-        #timeInit = input("Ingrese la hora inicial (00:00-23:59): ") 
-        #Finaltime = input("Ingrese la hora final (00:00-23:59): ")     
+        timeInit = input("Ingrese la hora inicial (00:00-23:59): ") 
+        Finaltime = input("Ingrese la hora final (00:00-23:59): ")
+        printAccidentsByTimeRange(cont,timeInit,Finaltime)
           
     elif int(inputs[0]) == 8:
         print("\nBuscando la zona geográfica más accidentada: ")
-        #latitude = input("Ingrese la latitud: ")
-        #length = input("Ingrese la longitud: ")
+        preference = input("Digite 'Mi' si desea realizar la búsqueda en Millas. 'Km' si desea realizarla en Kilómetros: ")
+        latitude = input("Ingrese la latitud: ")
+        length = input("Ingrese la longitud: ")
+        rad = input("Ingrese el radio a buscar: ")
+        printZoneWithMoreAccidents(cont,float(latitude),float(length),float(rad),preference)
 
     else:
         sys.exit(0)

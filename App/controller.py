@@ -84,9 +84,15 @@ def getStateWithMoreAccidents(analyzer,initialDate,finalDate):
     finalDate = datetime.datetime.strptime(finalDate, '%Y-%m-%d')
     return model.getStateWithMoreAccidents(analyzer,initialDate.date(),finalDate.date())
 
+def getAccidentsByTimeRange(analyzer,initialTime,finalTime):
+    initialTime = datetime.datetime.strptime(initialTime,'%H:%M')
+    finalTime = datetime.datetime.strptime(finalTime,'%H:%M')
+    return model.getAccidentsByTimeRange(analyzer,initialTime.time(),finalTime.time())
 
+def getZoneWithMoreAccidents(analyzer, refLat, refLong,givenRad,preference):
+    return model.getZoneWithMoreAccidents(analyzer,refLat,refLong,givenRad,preference)
 
-
+############# dateIndex #################
 def accidentsSize(analyzer):
     """
     Numero de accidentes leidos
@@ -119,3 +125,31 @@ def maxKey(analyzer):
     La mayor llave del arbol
     """
     return model.maxKey(analyzer)
+
+############ timeIndex ################
+
+def timeIndexHeight(analyzer):
+    """
+    Altura del indice (arbol)
+    """
+    return model.timeIndexHeight(analyzer)
+
+
+def timeIndexSize(analyzer):
+    """
+    Numero de nodos en el arbol
+    """
+    return model.timeIndexSize(analyzer)
+
+def minKeyTime(analyzer):
+    """
+    La menor llave del arbol
+    """
+    return model.minKeyTime(analyzer)
+
+
+def maxKeyTime(analyzer):
+    """
+    La mayor llave del arbol
+    """
+    return model.maxKeyTime(analyzer)

@@ -24,6 +24,7 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import orderedmap as om
 from DISClib.DataStructures import mapentry as me
 from DISClib.ADT import map as m
+from math import radians,cos,sin,asin,sqrt
 import datetime
 assert config
 
@@ -47,12 +48,16 @@ def newAnalyzer():
     Retorna el analizador inicializado.
     """
     analyzer = {'accidents': None,
-                'dateIndex': None
+                'dateIndex': None,
+                'timeIndex': None
                 }
 
-    analyzer['accidents'] = lt.newList('SINGLE_LINKED', compareIds)
+    analyzer['accidents'] = lt.newList('ARRAY_LIST', compareIds)
     analyzer['dateIndex'] = om.newMap(omaptype='RBT',
                                       comparefunction=compareDates)
+    analyzer['timeIndex'] = om.newMap(omaptype='RBT',
+                                      comparefunction=compareTimes)
+    
     return analyzer
 
 # Funciones para agregar informacion al catalogo
@@ -62,6 +67,7 @@ def addAccident(analyzer, accident):
     """
     lt.addLast(analyzer['accidents'], accident)
     updateDateIndex(analyzer['dateIndex'], accident)
+    updateTimeIndex(analyzer['timeIndex'],accident)
     
     return analyzer
 
@@ -86,6 +92,23 @@ def updateDateIndex(map, accident):
 
     return map
 
+
+def updateTimeIndex(map,accident):
+    ocurredtime=accident['Start_Time']
+    ocurredtime=ocurredtime[11:]
+    ocurredtime=ocurredtime[:5]
+    accidentTime=datetime.datetime.strptime(ocurredtime,'%H:%M')
+    entry=om.get(map,accidentTime.time())
+    if entry is None:
+        timeEntry = newDataEntry(accident)
+        om.put(map,accidentTime.time(),timeEntry)
+    else:
+        timeEntry=me.getValue(entry)
+    addTimeIndex(timeEntry,accident)
+    
+    return map
+
+
 def addDateIndex(dateentry,accident):
     lst = dateentry['lstaccidents']
     lst2 = dateentry['states']
@@ -106,7 +129,29 @@ def addDateIndex(dateentry,accident):
 
     return dateentry
 
+def addTimeIndex(timeEntry,accident):
+    lst=timeEntry['lstaccidents']
+    lt.addLast(lst,accident)
+    severityIndex=timeEntry['severityIndex']
+    severityEntry=m.get(severityIndex,accident['Severity'])
+    if (severityEntry is None):
+        entry = newSeverityEntryWithoutState(accident['Severity'],accident)
+        lt.addLast(entry['lstseverity'],accident)
+        m.put(severityIndex,accident['Severity'],entry)
+    else:
+        entry=me.getValue(severityEntry)
+        lt.addLast(entry['lstseverity'],accident)
+    
+    return timeEntry
 
+def newDataEntry(accident):
+    entry = {'severityIndex':None,'lstaccidents':None}
+    entry['severityIndex']=m.newMap(numelements=5,
+                                    maptype='PROBING',
+                                    comparefunction=compareSeverity)
+    entry['lstaccidents']=lt.newList('SINGLE_LINKED',compareDates)
+
+    return entry
 
 def newDataEntry2(accident):
 
@@ -125,6 +170,12 @@ def newSeverityEntry(severitygrp, severity):
     severityentry['severity']=severitygrp
     severityentry['lstseverity']=lt.newList('SINGLE_LINKED',compareSeverity)
     severityentry['state']=lt.newList('ARRAY_LIST',compareStates)
+    return severityentry
+
+def newSeverityEntryWithoutState(severitygrp, severity):
+    severityentry = {'severity':None, 'lstseverity':None}
+    severityentry['severity']=severitygrp
+    severityentry['lstseverity']=lt.newList('SINGLE_LINKED',compareSeverity)
     return severityentry
 
 # ==============================
@@ -282,14 +333,123 @@ def getStateWithMoreAccidents(analyzer,initialDate, finalDate):
     return resultDate,winnerState
 #################################################################
 
+################# REQUERIMIENTO 5 - Grupal ##########################
+def getAccidentsByTime(analyzer,time):
+    '''
+    Reporta la cantidad de accidentes por severidad para la hora ingresada
+    '''
+    accidentTime=om.get(analyzer['timeIndex'],time)
+    if accidentTime:
+        if accidentTime['key'] is not None:
+            lst = lt.newList('ARRAY_LIST')
+            severityMap = me.getValue(accidentTime)['severityIndex']
+            severityNum1 = m.get(severityMap,'1')
+            severityNum2=m.get(severityMap,'2')
+            severityNum3=m.get(severityMap,'3')
+            severityNum4=m.get(severityMap,'4')
+            if (severityNum1 is not None):
+                lt.addLast(lst,(m.size(me.getValue(severityNum1)['lstseverity'])))
+            else:
+                lt.addLast(lst,0)
+            if (severityNum2 is not None):
+                lt.addLast(lst,(m.size(me.getValue(severityNum2)['lstseverity'])))
+            else:
+                lt.addLast(lst,0)
+            if (severityNum3 is not None):
+                lt.addLast(lst,(m.size(me.getValue(severityNum3)['lstseverity'])))
+            else:
+                lt.addLast(lst,0)
+            if (severityNum4 is not None):
+                lt.addLast(lst,(m.size(me.getValue(severityNum4)['lstseverity'])))
+            else:
+                lt.addLast(lst,0)
+            return (lt.getElement(lst,1),lt.getElement(lst,2),lt.getElement(lst,3),lt.getElement(lst,4))
+    else:
+        return 0
+
+def getAccidentsByTimeRange(analyzer,initialTime,finalTime):
+    severities={'Uno':0,
+                'Dos':0,
+                'Tres':0,
+                'Cuatro':0}
+    percentages={'Uno':0,
+                 'Dos':0,
+                 'Tres':0,
+                 'Cuatro':0}
+    lst = om.values(analyzer['timeIndex'],initialTime,finalTime)
+    for i in range(1,lt.size(lst)+1):
+        time = lt.getElement(lst,i)
+        one,two,three,four = getAccidentsByTime(analyzer,time)
+        severities['Uno'] += one
+        severities['Dos'] += two
+        severities['Tres'] += three
+        severities['Cuatro'] += four
+
+    total = severities['Uno']+severities['Dos']+severities['Tres']+severities['Cuatro']
+    p1 = (severities['Uno']*100)/total
+    p2 = (severities['Dos']*100)/total
+    p3 = (severities['Tres']*100)/total
+    p4 = (severities['Cuatro']*100)/total
+    percentages['Uno'] = round(p1,4)
+    percentages['Dos'] = round(p2,4)
+    percentages['Tres'] = round(p3,4)
+    percentages['Cuatro'] = round(p4,4)
+    return severities,percentages
+#################################################################################
+
+############# REQUERIMIENTO 6 ##########################
+def getZoneWithMoreAccidents(analyzer, refLat, refLong,givenRad,preference):
+    accidents = analyzer['accidents']
+    lon1 = radians(refLong)
+    lat1 = radians(refLat)
+    lstAccepted = lt.newList('ARRAY_LIST',compareIds)
+    weekDays = {'Monday': 0,
+                'Tuesday': 0,
+                'Wednesday':0,
+                'Thursday':0,
+                'Friday':0,
+                'Saturday':0,
+                'Sunday':0}
+    for i in range(1,lt.size(accidents)+1):
+        accidentInfo = lt.getElement(accidents,i)
+        accidentLat = float(accidentInfo['Start_Lat'])
+        accidentLng = float(accidentInfo['Start_Lng'])
+        lon2 = accidentLng
+        lat2 = accidentLat
+
+        dlon = lon2-lon1
+        dlat = lat2-lat1
+        a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+
+        c = 2*asin(sqrt(a))
+        if preference == 'km':
+            r = 6371 #Radio de la tierra en kilómetros
+        elif preference == 'mi':
+            r = 3956 #Radio de la tierra en millas
+
+        result = c * r
+        if result <= givenRad:
+            lt.addLast(lstAccepted,accidentInfo)
+    total = lt.size(lstAccepted)
+    for i in range(1,lt.size(lstAccepted)+1):
+        accident = lt.getElement(lstAccepted,i)
+        accidentDate = accident['Start_Time']
+        accidentDate=datetime.datetime.strptime(accidentDate, "%Y-%m-%d %H:%M:%S")
+        ocurredDate=datetime.datetime.strftime(accidentDate,"%A %b %d %H:%M:%S %Y")
+        ocurredDate = str(ocurredDate)
+        lstOcurred = ocurredDate.split(" ")
+        if lstOcurred[0] in weekDays.keys():
+            weekDays[lstOcurred[0]]+=1
+    return weekDays,total
+#############################################
 
 def accidentsSize(analyzer):
     """
-    Número de accidentes en el catago
+    Número de accidentes en el catalogo
     """
     return lt.size(analyzer['accidents'])
 
-
+################ dateIndex ###############
 def indexHeight(analyzer):
     """Numero de fechas leidas
     """
@@ -306,11 +466,32 @@ def minKey(analyzer):
     """
     return om.minKey(analyzer['dateIndex'])
 
-
 def maxKey(analyzer):
     """Numero de accidentes leido
     """
     return om.maxKey(analyzer['dateIndex'])
+
+############## timeIndex ############
+
+def timeIndexHeight(analyzer):
+    """Numero de horas leidas
+    """
+    return om.height(analyzer['timeIndex'])
+
+def timeIndexSize(analyzer):
+    """Numero de horas leidas
+    """
+    return om.size(analyzer['timeIndex'])
+
+def minKeyTime(analyzer):
+    """Numero de accidentes leido
+    """
+    return om.minKey(analyzer['timeIndex'])
+
+def maxKeyTime(analyzer):
+    """Numero de accidentes leido
+    """
+    return om.maxKey(analyzer['timeIndex'])
 
 # ==============================
 # Funciones de Comparacion
@@ -335,6 +516,14 @@ def compareDates(date1, date2):
     if (date1 == date2):
         return 0
     elif (date1 > date2):
+        return 1
+    else:
+        return -1
+
+def compareTimes(time1,time2):
+    if time1==time2:
+        return 0
+    elif time1 > time2:
         return 1
     else:
         return -1
