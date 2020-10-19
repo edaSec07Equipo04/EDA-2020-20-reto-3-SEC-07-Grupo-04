@@ -107,7 +107,11 @@ while True:
 
     elif int(inputs[0]) == 6:
         print("\nBuscando el estado con más accidentes: ")
-        #date = input("Ingrese la fecha a buscar (YYYY-MM-DD): ")
+        dateInit = input("Ingrese la fecha inicial (YYYY-MM-DD): ")
+        finalDate = input("Ingrese la fecha final (YYY-MM-DD): ")
+        result = controller.getStateWithMoreAccidents(cont,dateInit,finalDate)
+        print("La fecha con más accidentes reportados en el rango de fechas es: "+result[0])
+        print("El estado con más accidentes reportados en el rango de fechas es: " + result[1])
 
     elif int(inputs[0]) == 7:
         print("\nBuscando accidentes por rango de horas: ")
