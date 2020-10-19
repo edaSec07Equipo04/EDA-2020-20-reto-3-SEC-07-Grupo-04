@@ -38,8 +38,8 @@ operación seleccionada.
 # ___________________________________________________
 
 #accidentsFile = "US_Accidents_Dec19.csv"
-accidentsFile = "us_accidents_small.csv"
-#accidentsFile = "us_accidents_dis_2016.csv"
+#accidentsFile = "us_accidents_small.csv"
+accidentsFile = "us_accidents_dis_2016.csv"
 #accidentsFile = "us_accidents_dis_2017.csv"
 #accidentsFile = "us_accidents_dis_2018.csv"
 #accidentsFile = "us_accidents_dis_2019.csv"
@@ -164,9 +164,9 @@ while True:
 
         date = input("Ingrese la fecha a buscar (YYYY-MM-DD): ")
         total,fecha = controller.getAccidentsBeforeTo(cont,date)
-        print("El total de accidentes antes de la fecha ingresada son : " )
+        print("\nEl total de accidentes antes de la fecha ingresada son : " )
         print(total)
-        print("La fecha con más accidentes registrados, anterior a la fecha ingresada es:")
+        print("\nLa fecha con más accidentes registrados, anterior a la fecha ingresada es:")
         print(fecha)
 
     elif int(inputs[0]) == 5:
