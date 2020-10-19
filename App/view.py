@@ -38,8 +38,8 @@ operación seleccionada.
 # ___________________________________________________
 
 #accidentsFile = "US_Accidents_Dec19.csv"
-#accidentsFile = "us_accidents_small.csv"
-accidentsFile = "us_accidents_dis_2016.csv"
+accidentsFile = "us_accidents_small.csv"
+#accidentsFile = "us_accidents_dis_2016.csv"
 #accidentsFile = "us_accidents_dis_2017.csv"
 #accidentsFile = "us_accidents_dis_2018.csv"
 #accidentsFile = "us_accidents_dis_2019.csv"
@@ -100,7 +100,9 @@ while True:
 
     elif int(inputs[0]) == 4:
         print("\nBuscando accidentes anteriores a una fecha: ")
-        #date = input("Ingrese la fecha a buscar (YYYY-MM-DD): ")
+
+        date = input("Ingrese la fecha a buscar (YYYY-MM-DD): ")
+        print(controller.getAccidentsBeforeTo(cont,date))
 
     elif int(inputs[0]) == 5:
         print("\nBuscando accidentes en un rango de fechas: ")

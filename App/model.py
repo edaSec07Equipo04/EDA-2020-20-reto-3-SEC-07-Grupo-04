@@ -130,6 +130,11 @@ def newSeverityEntry(severitygrp, severity):
 # ==============================
 # Funciones de consulta
 # ==============================
+
+# ============================
+# Requerimiento 1 / GRUPAL
+# ============================
+
 def getAccidentsByDate(analyzer,date):
     '''
     Reporta la cantidad de accidentes por severidad para la fecha ingresada
@@ -162,6 +167,37 @@ def getAccidentsByDate(analyzer,date):
             return (lt.getElement(lst,1),lt.getElement(lst,2),lt.getElement(lst,3),lt.getElement(lst,4))
     else:
         return 0
+
+# ===============================
+# Requerimento 2 / Juan Esteban R
+# ===============================
+
+def getAccidentsBefore(analyzer, date):
+    #contador = 0
+    #
+    date_min = minKey( analyzer)
+    date_max = date
+    dates = om.values(analyzer['dateIndex'],date_min,date_max)
+
+    totalT = 0
+    maximo = 0
+    fecha_max = ""
+
+    for i in range(1,lt.size(dates)+1):
+        fecha = lt.getElement(dates,i)
+
+        severity = getAccidentsByDate(analyzer,fecha)
+        total    = severity[0] + severity[1] + severity[2] + severity[3]
+        totalT   += total
+        
+        if total > maximo:
+            maximo = total
+            fecha_max = fecha
+
+
+    return(totalT,maximo,fecha_max)
+
+
 
 ############## REQUERIMIENTO 4 - Germán Rojas ##############################
 
