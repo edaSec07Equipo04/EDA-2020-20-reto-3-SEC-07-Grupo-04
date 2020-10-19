@@ -171,8 +171,9 @@ while True:
 
     elif int(inputs[0]) == 5:
         print("\nBuscando accidentes en un rango de fechas: ")
-        #dateInit = input("Ingrese la fecha inicial (YYYY-MM-DD): ")
-        #finalDate = input("Ingrese la fecha final (YYY-MM-DD): ")
+        dateInit = input("Ingrese la fecha inicial (YYYY-MM-DD): ")
+        finalDate = input("Ingrese la fecha final (YYY-MM-DD): ")
+        controller.getTotalAccidentsReq3(cont,dateInit,finalDate)
 
     elif int(inputs[0]) == 6:
         print("\nBuscando el estado con más accidentes: ")
