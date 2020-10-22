@@ -37,7 +37,7 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-accidentsFile = "US_Accidents_Dec19.csv"
+#accidentsFile = "US_Accidents_Dec19.csv"
 #accidentsFile = "us_accidents_small.csv"
 #accidentsFile = "us_accidents_dis_2016 copy.csv"
 #accidentsFile = "us_accidents_dis_2017.csv"
@@ -88,7 +88,7 @@ def printAccidentsByTimeRange(cont,timeInit,Finaltime):
 
     severities, percentages=controller.getAccidentsByTimeRange(cont,timeInit,Finaltime)
     for key,value in severities.items():
-        print("El número de accidentes para la severidad "+key+" es: "+ str(value)+". Esto equivale a un porcentaje de "+str(percentages[key])+"%"+ "sobre el nivel total de accidentes.")
+        print("El número de accidentes para la severidad "+key+" es: "+ str(value)+". Esto equivale a un porcentaje de "+str(percentages[key])+"%"+ " sobre el nivel total de accidentes.")
 
 def printZoneWithMoreAccidents(analyzer,latitude,length,rad,preference):
     weekDays,total = controller.getZoneWithMoreAccidents(analyzer,latitude,length,rad,preference.lower())
